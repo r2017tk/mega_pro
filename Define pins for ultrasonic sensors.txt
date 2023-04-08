@@ -1,0 +1,83 @@
+// Define pins for ultrasonic sensors
+#define TRIG_PIN_1 9
+#define ECHO_PIN_1 10
+#define TRIG_PIN_2 5
+#define ECHO_PIN_2 4
+
+// Define speed of sound in cm/us
+#define SPEED_OF_SOUND 0.034
+
+// Define pin for servo motor
+#define SERVO_PIN 3
+
+// Import servo library
+#include <Servo.h>
+
+// Create a servo object
+Servo servoMotor;
+
+// Create variables for storing distances
+long distance_1;
+long distance_2;
+
+// Initialize the sensors and servo motor
+void setup() {
+  // Initialize serial communication
+  Serial.begin(9600);
+
+  // Initialize ultrasonic sensor pins as input/output
+  pinMode(TRIG_PIN_1, OUTPUT);
+  pinMode(ECHO_PIN_1, INPUT);
+  pinMode(TRIG_PIN_2, OUTPUT);
+  pinMode(ECHO_PIN_2, INPUT);
+
+  // Attach the servo to the PWM pin
+  servoMotor.attach(SERVO_PIN);
+
+  // Rotate the servo to the 180 degrees position
+  servoMotor.write(180);
+
+  // Wait for the servo to reach the position
+  delay(1000);
+}
+
+// Scan the surrounding using ultrasonic sensors and servo motor
+void loop() {
+  // Loop from 0 to 180 degrees
+  for (int i = 0; i < 180; i++) {
+    // Read the distances from both sensors
+    distance_1 = getDistance(TRIG_PIN_1, ECHO_PIN_1);
+    distance_2 = getDistance(TRIG_PIN_2, ECHO_PIN_2);
+
+    // Print the angle and distances to serial monitor
+    Serial.print(i);
+    Serial.print(",");
+    Serial.print(distance_1);
+    Serial.print(",");
+    Serial.println(distance_2);
+
+    // Rotate the servo to the current angle
+    servoMotor.write(i);
+
+    // Wait for a short time
+    delay(10);
+  }
+
+  // Loop from 180 to 0 degrees
+  for (int i = 180; i > 0; i--) {
+    // Read the distances from both sensors
+    distance_1 = getDistance(TRIG_PIN_1, ECHO_PIN_1);
+    distance_2 = getDistance(TRIG_PIN_2, ECHO_PIN_2);
+
+    // Print the angle and distances to serial monitor
+    Serial.print(i);
+    Serial.print(",");
+    Serial.print(distance_1);
+    Serial.print(",");
+    Serial.println(distance_2);
+
+    // Rotate the servo to the current angle
+    servoMotor.write(i);
+
+    // Wait for a short time
+    delay(10);
